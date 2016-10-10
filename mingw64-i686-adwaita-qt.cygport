@@ -1,0 +1,39 @@
+CROSS_HOST="i686-w64-mingw32"
+inherit cross qt4-cmake qt5
+
+NAME="mingw64-i686-adwaita-qt"
+VERSION=0.5
+RELEASE=1
+CATEGORY="Devel"
+SUMMARY="Qt Adwaita theme for Win32 toolchain"
+DESCRIPTION="A native style to bend Qt4 and Qt5 applications to look like they
+belong into the GNOME desktop."
+HOMEPAGE="https://github.com/MartinBriza/adwaita-qt"
+SRC_URI="${HOMEPAGE}/archive/${VERSION}/adwaita-qt-${VERSION}.tar.gz"
+SRC_DIR="adwaita-qt-${VERSION}"
+
+PKG_NAMES="${NAME}4 ${NAME}5 ${NAME}-common"
+
+mingw64_i686_adwaita_qt4_REQUIRES="${NAME}-common mingw64-i686-adwaita-icon-theme cantarell-fonts"
+mingw64_i686_adwaita_qt4_SUMMARY="${SUMMARY/Qt/Qt4}"
+mingw64_i686_adwaita_qt4_CONTENTS="${QT4_PLUGINSDIR#/}/styles/adwaita.dll"
+mingw64_i686_adwaita_qt5_REQUIRES="${NAME}-common mingw64-i686-adwaita-icon-theme cantarell-fonts"
+mingw64_i686_adwaita_qt4_SUMMARY="${SUMMARY/Qt/Qt5}"
+mingw64_i686_adwaita_qt5_CONTENTS="${QT5_PLUGINSDIR#/}/styles/adwaita.dll"
+mingw64_i686_adwaita_qt_common_CONTENTS="usr/share/doc/ ${CROSS_DATADIR#/}/themes/Adwaita/qt/"
+
+src_compile() {
+	mkdir -p ${B}/qt{4,5}
+	cd ${B}/qt4
+	qt4_cmake_compile -DUSE_QT4=ON
+	cd ${B}/qt5
+	cygcmake
+	cygmake
+}
+
+src_install() {
+	cd ${B}/qt4
+	cyginstall
+	cd ${B}/qt5
+	cyginstall
+}
